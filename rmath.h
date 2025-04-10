@@ -1,0 +1,313 @@
+/*
+*
+*	RMath 
+*
+* 2025 ColleagueRiley
+*
+* Public domain stb-style math library and glm alternative
+* 
+* This is free and unencumbered software released into the public domain.
+* Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
+* software, either in source code form or as a compiled binary, for any purpose,
+* commercial or non-commercial, and by any means.
+* In jurisdictions that recognize copyright laws, the author or authors of this
+* software dedicate any and all copyright interest in the software to the public
+* domain. We make this dedication for the benefit of the public at large and to
+* the detriment of our heirs and successors. We intend this dedication to be an
+* overt act of relinquishment in perpetuity of all present and future rights to
+* this software under copyright law.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+* ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+* WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*
+*
+*/
+
+#ifndef RMATH_HEADER
+#define RMATH_HEADER
+
+#if defined(RMATH_EXPORT) ||  defined(RMATH_IMPORT)
+	#if defined(_WIN32)
+		#if defined(__TINYC__) && (defined(RMATH_EXPORT) ||  defined(RMATH_IMPORT))
+			#define __declspec(x) __attribute__((x))
+		#endif
+
+		#if defined(RMATH_EXPORT)
+			#define RMATHDEF __declspec(dllexport)
+		#else
+			#define RMATHDEF __declspec(dllimport)
+		#endif
+	#else
+		#if defined(RMATH_EXPORT)
+			#define RMATHDEF __attribute__((visibility("default")))
+		#endif
+	#endif
+#endif
+
+#ifndef RMATHDEF
+	#define RMATHDEF inline
+#endif
+
+#include <stddef.h>
+#ifndef RMATH_INT_DEFINED
+	#ifdef RMATH_USE_INT /* optional for any system that might not have stdint.h */
+		typedef unsigned char 	u8;
+		typedef signed char		i8;
+		typedef unsigned short  u16;
+		typedef signed short 	i16;
+		typedef unsigned long int 	u32;
+		typedef signed long int		i32;
+		typedef unsigned long long	u64;
+		typedef signed long long		i64;
+	#else /* use stdint standard types instead of c ""standard"" types */
+		#include <stdint.h>
+
+		typedef uint8_t     u8;
+		typedef int8_t      i8;
+		typedef uint16_t   u16;
+		typedef int16_t    i16;
+		typedef uint32_t   u32;
+		typedef int32_t    i32;
+		typedef uint64_t   u64;
+		typedef int64_t    i64;
+	#endif
+    #define RMATH_INT_DEFINED
+#endif
+#endif
+
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159
+#endif
+
+#ifndef DEG2RAD
+#define DEG2RAD (M_PI / 180.0f)
+#endif
+
+#ifndef rmCos
+    #include <math.h>
+    #define rmCos cosf
+    #define rmSin sinf
+#endif
+
+#define rmTan(theta) (rmCos(theta) / rmSin(theta))
+#define rmCot(theta) (rmSin(theta) / rmCos(theta))
+
+typedef struct rmMat4 { float m[16]; } rmMat4;
+
+/* transformations */
+RMATHDEF rmMat4 rmLoadIdentity(void);
+RMATHDEF rmMat4 rmTranslate(float matrix[16], float x, float y, float z);
+RMATHDEF rmMat4 rmRotate(float matrix[16], float angle, float x, float y, float z);
+RMATHDEF rmMat4 rmPerspective(float matrix[16], float fovY, float aspect, float zNear, float zFar);
+RMATHDEF rmMat4 rmOrtho(float matrix[16], float left, float right, float bottom, float top, float znear, float zfar);
+RMATHDEF rmMat4 rmScale(float matrix[16], float x, float y, float z);
+
+RMATHDEF rmMat4 rmMat4Multiply(float left[16], float right[16]);
+
+typedef struct rmVec2 { float x, y; } rmVec2;
+typedef struct rmVec3 { float x, y, z; } rmVec3;
+typedef struct rmVec4 { float x, y, z, w; } rmVec4;
+
+RMATHDEF rmVec2 rmVec2DAdd(rmVec2 v1, rmVec2 v2);
+RMATHDEF rmVec3 rmVec3DAdd(rmVec3 v1, rmVec3 v2);
+RMATHDEF rmVec4 rmVec4DAdd(rmVec4 v1, rmVec4 v2);
+
+RMATHDEF rmVec2 rmVec2DSubrtact(rmVec2 v1, rmVec2 v2);
+RMATHDEF rmVec3 rmVec3DSubtract(rmVec3 v1, rmVec3 v2);
+RMATHDEF rmVec4 rmVec4DSubtract(rmVec4 v1, rmVec4 v2);
+
+RMATHDEF rmVec2 rmVec2Multiply(rmVec2 v1, rmVec2 v2);
+RMATHDEF rmVec3 rmVec3Multiply(rmVec3 v1, rmVec3 v2);
+RMATHDEF rmVec4 rmVec4Multiply(rmVec4 v1, rmVec4 v2);
+
+RMATHDEF rmVec2 rmVec2Divide(rmVec2 v1, rmVec2 v2);
+RMATHDEF rmVec3 rmVec3Divide(rmVec3 v1, rmVec3 v2);
+RMATHDEF rmVec4 rmVec4Divide(rmVec4 v1, rmVec4 v2);
+
+#define RM_VEC2(x, y) (rmVec2){x, y}
+#define RM_VEC3(x, y, z) (rmVec3){x, y, z}
+#define RM_VEC4(x, y, z, w) (rmVec4){x, y, z, w}
+
+RMATHDEF rmVec2 rmVec2MultiplyMat4(rmVec2 vec, rmMat4 matrix); 
+RMATHDEF rmVec3 rmVec3MultiplyMat4(rmVec3 vec, rmMat4 matrix); 
+RMATHDEF rmVec4 rmVec4MultiplyMat4(rmVec4 vec, rmMat4 matrix); 
+
+RMATHDEF rmVec3 rmVec4ToVec3(rmVec4 v);
+
+#ifndef RMATH_IMPLEMENTATON
+rmVec3 rmVec4ToVec3(rmVec4 v) {
+   return RM_VEC3(v.x / v.w,  
+                  v.y / v.w, 
+                  v.z / v.w);
+}
+
+rmVec2 rmVec2DAdd(rmVec2 v1, rmVec2 v2) { return (rmVec2){ v1.x + v2.x, v1.y + v2.y }; }
+rmVec3 rmVec3DAdd(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x + v2.x, v1.y + v2.y, v1.z + v2.z }; }
+rmVec4 rmVec4DAdd(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w }; }
+
+rmVec2 rmVec2DSubrtact(rmVec2 v1, rmVec2 v2) {  return (rmVec2){ v1.x - v2.x, v1.y - v2.y}; }
+rmVec3 rmVec3DSubtract(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x - v2.x, v1.y - v2.y, v1.z - v2.z }; }
+rmVec4 rmVec4DSubtract(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w }; }
+
+rmVec2 rmVec2Multiply(rmVec2 v1, rmVec2 v2) { return (rmVec2){ v1.x * v2.x, v1.y * v2.y }; }
+rmVec3 rmVec3Multiply(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x * v2.x, v1.y * v2.y, v1.z * v2.z }; }
+rmVec4 rmVec4Multiply(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x * v2.x, v1.y * v2.y, v1.z * v2.z, v1.w * v2.w }; }
+
+rmVec2 rmVec2Divide(rmVec2 v1, rmVec2 v2) { return (rmVec2){ v1.x / v2.x, v1.y / v2.y }; }
+rmVec3 rmVec3Divide(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x / v2.x, v1.y / v2.y, v1.z / v2.z }; }
+rmVec4 rmVec4Divide(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x / v2.x, v1.y / v2.y, v1.z / v2.z, v1.w / v2.w }; }
+
+rmMat4 rmLoadIdentity(void) {
+    rmMat4 matrix = (rmMat4) { 
+        {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        }
+    };
+
+    return matrix;
+}
+ 
+rmMat4 rmTranslate(float matrix[16], float x, float y, float z) {
+    rmMat4 matTranslation = { 
+        {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            x,    y,    z,    1.0f
+        }
+    };
+
+    return rmMat4Multiply(matTranslation.m, matrix);
+}
+
+rmMat4 rmRotate(float matrix[16], float angle, float x, float y, float z) {
+    float lengthSquared = x * x + y * y + z * z;
+	if ((lengthSquared != 1.0f) && (lengthSquared != 0.0f)) {
+		float inverseLength = 1.0f / sqrtf(lengthSquared);
+		x *= inverseLength;
+		y *= inverseLength;
+		z *= inverseLength;
+	}
+
+	/* Rotation matrix generation */
+	float sinres = sin(angle);
+	float cosres = cos(angle);
+	float t = 1.0f - cosres;
+
+	float matRotation[16] =  {
+					x * x * t + cosres,   	  	y * x * t + z * sinres,   	z * x * t - y * sinres,   	0.0f,
+					x * y * t - z * sinres,   	y * y * t + cosres,   		z * y * t + x * sinres,   	0.0f,
+					x * z * t + y * sinres,   	y * z * t - x * sinres,  	z * z * t + cosres,   		0.0f,
+					0.0f,   					0.0f,   					0.0f,   					1.0f
+				};
+
+	return rmMat4Multiply(matRotation, matrix);
+}
+
+rmMat4 rmPerspective(float matrix[16], float fovY, float aspect, float zNear, float zFar) {
+    rmMat4 perspective = {0};
+    fovY =  (fovY * DEG2RAD) / 2.0f;
+    const float f = rmCot(fovY);
+
+    perspective.m[0] = f / aspect;
+    perspective.m[5] = f;
+    perspective.m[10] = (zFar + zNear) / (zNear - zFar);
+    perspective.m[11] = -1.0;
+    perspective.m[14] = (2.0 * zFar * zNear) / (zNear - zFar);
+
+	return rmMat4Multiply(perspective.m, matrix);
+}
+
+rmMat4 rmOrtho(float matrix[16], float left, float right, float bottom, float top, float znear, float zfar) {
+    float rl = (float)(right - left);
+    float tb = (float)(top - bottom);
+    float fn = (float)(zfar - znear);
+
+    float matOrtho[16] = { 
+        (2.0f / rl),                          0.0f,                             0.0f,                                 0.0f,
+        0.0f,                                (2.0f / tb),                       0.0f,                                0.00,         
+        0.0f,                                 0.0f,                             (-2.0f / fn),                         0.0f,        
+        (-((float)left + (float)right) / rl), -((float)top + (float)bottom)/tb, (-((float)zfar + (float)znear) / fn), 1.0f
+    };
+
+    return rmMat4Multiply(matrix, matOrtho);
+}
+
+rmMat4 rmScale(float matrix[16], float x, float y, float z) {
+    rmMat4 matScale = { 
+        {
+            x,    0.0f, 0.0f, 0.0f,
+            0.0f, y,    0.0f, 0.0f,
+            0.0f, 0.0f, z,    0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        }
+    };
+
+    return rmMat4Multiply(matScale.m, matrix);
+}
+
+rmVec2 rmVec2MultiplyMat4(rmVec2 vec, rmMat4 matrix) {
+    float vecZ = 1;
+
+    const float w = (float)(matrix.m[3] * vec.x + matrix.m[7] * vec.y + matrix.m[11] * vecZ + matrix.m[15]);
+    const float z = (float)(matrix.m[2] * vec.x + matrix.m[6] * vec.y + matrix.m[10] * vecZ + matrix.m[14]) / w;
+
+
+    return (rmVec2) {
+        (float)(matrix.m[0] * vec.x + matrix.m[4] * vec.y + matrix.m[8] * vecZ + matrix.m[12]) / w,
+        (float)(matrix.m[1] * vec.x + matrix.m[5] * vec.y + matrix.m[9] * vecZ + matrix.m[13]) / w
+    };
+
+}
+
+rmVec3 rmVec3MultiplyMat4(rmVec3 vec, rmMat4 matrix) {
+    const float w = (float)(matrix.m[3] * vec.x + matrix.m[7] * vec.y + matrix.m[11] * vec.z + matrix.m[15]);
+
+    return (rmVec3) {
+        (float)(matrix.m[0] * vec.x + matrix.m[4] * vec.y + matrix.m[8] * vec.z + matrix.m[12]) / w,
+        (float)(matrix.m[1] * vec.x + matrix.m[5] * vec.y + matrix.m[9] * vec.z + matrix.m[13]) / w,
+        (float)(matrix.m[2] * vec.x + matrix.m[6] * vec.y + matrix.m[10] * vec.z + matrix.m[14]) / w,
+    };
+} 
+
+rmVec4 rmVec4MultiplyMat4(rmVec4 vec, rmMat4 matrix) {
+    return (rmVec4) {
+        (float)(matrix.m[0] * vec.x + matrix.m[4] * vec.y + matrix.m[8] * vec.z + matrix.m[12]),
+        (float)(matrix.m[1] * vec.x + matrix.m[5] * vec.y + matrix.m[9] * vec.z + matrix.m[13]),
+        (float)(matrix.m[2] * vec.x + matrix.m[6] * vec.y + matrix.m[10] * vec.z + matrix.m[14]),
+        (float)(matrix.m[3] * vec.x + matrix.m[7] * vec.y + matrix.m[11] * vec.z + matrix.m[15])
+    };
+} 
+
+rmMat4 rmMat4Multiply(float left[16], float right[16]) {
+    return (rmMat4) {
+        {
+            left[0] * right[0] + left[1] * right[4] + left[2] * right[8] + left[3] * right[12],
+            left[0] * right[1] + left[1] * right[5] + left[2] * right[9] + left[3] * right[13],
+            left[0] * right[2] + left[1] * right[6] + left[2] * right[10] + left[3] * right[14],
+            left[0] * right[3] + left[1] * right[7] + left[2] * right[11] + left[3] * right[15],
+            left[4] * right[0] + left[5] * right[4] + left[6] * right[8] + left[7] * right[12],
+            left[4] * right[1] + left[5] * right[5] + left[6] * right[9] + left[7] * right[13],
+            left[4] * right[2] + left[5] * right[6] + left[6] * right[10] + left[7] * right[14],
+            left[4] * right[3] + left[5] * right[7] + left[6] * right[11] + left[7] * right[15],
+            left[8] * right[0] + left[9] * right[4] + left[10] * right[8] + left[11] * right[12],
+            left[8] * right[1] + left[9] * right[5] + left[10] * right[9] + left[11] * right[13],
+            left[8] * right[2] + left[9] * right[6] + left[10] * right[10] + left[11] * right[14],
+            left[8] * right[3] + left[9] * right[7] + left[10] * right[11] + left[11] * right[15],
+            left[12] * right[0] + left[13] * right[4] + left[14] * right[8] + left[15] * right[12],
+            left[12] * right[1] + left[13] * right[5] + left[14] * right[9] + left[15] * right[13],
+            left[12] * right[2] + left[13] * right[6] + left[14] * right[10] + left[15] * right[14],
+            left[12] * right[3] + left[13] * right[7] + left[14] * right[11] + left[15] * right[15]
+        }
+    };
+}
+ 
+#endif
