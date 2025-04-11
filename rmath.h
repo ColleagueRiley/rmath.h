@@ -151,14 +151,14 @@ typedef u8 rmBool;
 #define RMATH_FALSE 0 
 #endif
 
-RMATHDEF rmBool rmCircleCollidePoint(rmCircle c, rmVec2 p);
+RMATHDEF rmBool rmCircleCollideVec2(rmCircle c, rmVec2 p);
 RMATHDEF rmBool rmCircleCollideRect(rmCircle c, rmRect r);
 RMATHDEF rmBool rmCircleCollide(rmCircle cir1, rmCircle cir2);
-RMATHDEF rmBool rmRectCollidePoint(rmRect r, rmVec2 p);
+RMATHDEF rmBool rmRectCollideVec2(rmRect r, rmVec2 p);
 RMATHDEF rmBool rmRectCollide(rmRect r, rmRect r2);
 RMATHDEF rmBool rmVec2Collide(rmVec2 p, rmVec2 p2);
 RMATHDEF rmBool rmVec3DCollide(rmVec3 p, rmVec3 p2);
-RMATHDEF rmBool rmCubeCollidePoint(rmCube p, rmVec3 p2);
+RMATHDEF rmBool rmCubeCollideVec3(rmCube p, rmVec3 p2);
 RMATHDEF rmBool rmCubeCollide(rmCube cube, rmCube cube2);
 
 #ifndef RMATH_IMPLEMENTATON
@@ -309,7 +309,7 @@ rmVec4 rmVec4MultiplyMat4(rmVec4 vec, rmMat4 matrix) {
     };
 } 
 
-rmBool rmCircleCollidePoint(rmCircle c, rmVec2 p) { return rmCircleCollideRect(c, (rmRect){p.x, p.y, 1, 1}); }
+rmBool rmCircleCollideVec2(rmCircle c, rmVec2 p) { return rmCircleCollideRect(c, (rmRect){p.x, p.y, 1, 1}); }
 rmBool rmCircleCollideRect(rmCircle c, rmRect r) {
     float testX = c.x; 
     float testY = c.y;
@@ -338,11 +338,11 @@ rmBool rmCircleCollide(rmCircle cir1, rmCircle cir2) {
 
     return !(distanceBetweenCircles > (cir1.d/2) + (cir2.d/2)); // check if there is a collid
 }
-rmBool rmRectCollidePoint(rmRect r, rmVec2 p) { return (p.x >= r.x &&  p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h); }
+rmBool rmRectCollideVec2(rmRect r, rmVec2 p) { return (p.x >= r.x &&  p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h); }
 rmBool rmRectCollide(rmRect r, rmRect r2) { return (r.x + r.w >= r2.x && r.x <= r2.x + r2.w && r.y + r.h >= r2.y && r.y <= r2.y + r2.h); }
 rmBool rmVec2Collide(rmVec2 p, rmVec2 p2) { return (p.x == p2.x && p.y == p2.y); }
 rmBool rmVec3DCollide(rmVec3 p, rmVec3 p2) { return (p.x == p2.x && p.y == p2.y && p.z == p2.z); }
-rmBool rmCubeCollidePoint(rmCube cube, rmVec3 p) { return rmCubeCollide(cube, (rmCube){p.x, p.y, p.z, 1, 1, 1}); }
+rmBool rmCubeCollideVec3(rmCube cube, rmVec3 p) { return rmCubeCollide(cube, (rmCube){p.x, p.y, p.z, 1, 1, 1}); }
 rmBool rmCubeCollide(rmCube r, rmCube r2) {
      return (r.x + r.w >= r2.x && r.x <= r2.x + r2.w && r.y + r.h >= r2.y && r.y <= r2.y + r2.h && r.z + r.l >= r2.z && r.z <= r2.z + r2.l);
 }
