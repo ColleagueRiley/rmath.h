@@ -143,6 +143,14 @@ RMATHDEF rmVec4 rmVec4MultiplyMat4(rmVec4 vec, rmMat4 matrix);
 
 RMATHDEF rmVec3 rmVec4ToVec3(rmVec4 v);
 
+RMATHDEF rmVec2 rmVec2ToWorld(rmVec2 v, float screenWidth, float screenHeight);
+RMATHDEF rmVec3 rmVec3ToWorld(rmVec3 v, float screenWidth, float screenHeight);
+RMATHDEF rmVec4 rmVec4ToWorld(rmVec4 v, float screenWidth, float screenHeight);
+
+RMATHDEF rmVec2 rmVec2ToScreen(rmVec2 v, float screenWidth, float screenHeight);
+RMATHDEF rmVec3 rmVec3ToScreen(rmVec3 v, float screenWidth, float screenHeight);
+RMATHDEF rmVec4 rmVec4ToScreen(rmVec4 v, float screenWidth, float screenHeight);
+
 #ifndef RMATH_SHAPES_DEFINED
 typedef struct rmCircle { float x, y, d; } rmCircle;
 typedef struct rmRect { float x, y, w, h; } rmRect;
@@ -170,6 +178,28 @@ rmVec3 rmVec4ToVec3(rmVec4 v) {
    return RM_VEC3(v.x / v.w,  
                   v.y / v.w, 
                   v.z / v.w);
+}
+
+rmVec2 rmVec2ToWorld(rmVec2 v, float screenWidth, float screenHeight) {  
+    return RM_VEC2((float)(2.0f * (v.x) / screenWidth - 1.0f), (float)(1.0f + -2.0f * (v.y) / screenHeight));
+}
+rmVec3 rmVec3ToWorld(rmVec3 v, float screenWidth, float screenHeight) {  
+    return RM_VEC3((float)(2.0f * (v.x) / screenWidth - 1.0f), (float)(1.0f + -2.0f * (v.y) / screenHeight), v.z);
+}
+rmVec4 rmVec4ToWorld(rmVec4 v, float screenWidth, float screenHeight) {  
+    return RM_VEC4((float)(2.0f * (v.x) / screenWidth - 1.0f), (float)(1.0f + -2.0f * (v.y) / screenHeight), v.z, v.w);
+}
+
+rmVec2 rmVec2ToScreen(rmVec2 v, float screenWidth, float screenHeight) { 
+    return RM_VEC2((float)((v.x + 1.0f) * 0.5f * screenWidth), (float)((1.0f - v.y) * 0.5f * screenHeight));
+}
+
+rmVec3 rmVec3ToScreen(rmVec3 v, float screenWidth, float screenHeight) {  
+    return RM_VEC3((float)((v.x + 1.0f) * 0.5f * screenWidth), (float)((1.0f - v.y) * 0.5f * screenHeight), v.z);
+}
+
+rmVec4 rmVec4ToScreen(rmVec4 v, float screenWidth, float screenHeight) { 
+    return RM_VEC4((float)((v.x + 1.0f) * 0.5f * screenWidth), (float)((1.0f - v.y) * 0.5f * screenHeight), v.z, v.w);
 }
 
 rmVec2 rmVec2Add(rmVec2 v1, rmVec2 v2) { return (rmVec2){ v1.x + v2.x, v1.y + v2.y }; }
