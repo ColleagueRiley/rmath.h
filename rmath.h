@@ -139,6 +139,28 @@ RMATHDEF rmVec4 rmVec4MultiplyMat4(rmVec4 vec, rmMat4 matrix);
 
 RMATHDEF rmVec3 rmVec4ToVec3(rmVec4 v);
 
+#ifndef RMATH_SHAPES_DEFINED
+typedef struct rmCircle { float x, y, d; } rmCircle;
+typedef struct rmRect { float x, y, w, h; } rmRect;
+typedef struct rmCube { float x, y, z, w, h, l; } rmCube;
+#endif
+
+#ifndef RMATH_BOOL_DEFINED
+typedef u8 rmBool;
+#define RMATH_TRUE 1
+#define RMATH_FALSE 0 
+#endif
+
+RMATHDEF rmBool rmCircleCollidePoint(rmCircle c, rmVec2 p);
+RMATHDEF rmBool rmCircleCollideRect(rmCircle c, rmRect r);
+RMATHDEF rmBool rmCircleCollide(rmCircle cir1, rmCircle cir2);
+RMATHDEF rmBool rmRectCollidePoint(rmRect r, rmVec2 p);
+RMATHDEF rmBool rmRectCollide(rmRect r, rmRect r2);
+RMATHDEF rmBool rmVec2Collide(rmVec2 p, rmVec2 p2);
+RMATHDEF rmBool rmVec3DCollide(rmVec3 p, rmVec3 p2);
+RMATHDEF rmBool rmCubeCollidePoint(rmCube p, rmVec3 p2);
+RMATHDEF rmBool rmCubeCollide(rmCube cube, rmCube cube2);
+
 #ifndef RMATH_IMPLEMENTATON
 rmVec3 rmVec4ToVec3(rmVec4 v) {
    return RM_VEC3(v.x / v.w,  
@@ -286,6 +308,44 @@ rmVec4 rmVec4MultiplyMat4(rmVec4 vec, rmMat4 matrix) {
         (float)(matrix.m[3] * vec.x + matrix.m[7] * vec.y + matrix.m[11] * vec.z + matrix.m[15])
     };
 } 
+
+rmBool rmCircleCollidePoint(rmCircle c, rmVec2 p) { return rmCircleCollideRect(c, (rmRect){p.x, p.y, 1, 1}); }
+rmBool rmCircleCollideRect(rmCircle c, rmRect r) {
+    float testX = c.x; 
+    float testY = c.y;
+
+    // fill cords based on x/ys of the shapes
+    if (c.x < r.x)
+      testX = r.x;  
+
+    else if (c.x > r.x+r.w) 
+      testX = r.x-r.w;
+
+    if (c.y < r.y)  
+      testY = r.y;  
+
+    else if (c.y > r.y+r.h)
+      testY = r.y+r.h; 
+    
+    // check
+    return ( sqrt( ( (c.x - testX) * (c.x - testX) ) + ( (c.y - testY) * (c.y - testY) ) )  <= (c.d/2) );
+}
+rmBool rmCircleCollide(rmCircle cir1, rmCircle cir2) {
+    float distanceBetweenCircles = (float) sqrt(
+        (cir2.x - cir1.x) * (cir2.x - cir1.x) + 
+        (cir2.y - cir1.y) * (cir2.y - cir1.y)
+    );
+
+    return !(distanceBetweenCircles > (cir1.d/2) + (cir2.d/2)); // check if there is a collid
+}
+rmBool rmRectCollidePoint(rmRect r, rmVec2 p) { return (p.x >= r.x &&  p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h); }
+rmBool rmRectCollide(rmRect r, rmRect r2) { return (r.x + r.w >= r2.x && r.x <= r2.x + r2.w && r.y + r.h >= r2.y && r.y <= r2.y + r2.h); }
+rmBool rmVec2Collide(rmVec2 p, rmVec2 p2) { return (p.x == p2.x && p.y == p2.y); }
+rmBool rmVec3DCollide(rmVec3 p, rmVec3 p2) { return (p.x == p2.x && p.y == p2.y && p.z == p2.z); }
+rmBool rmCubeCollidePoint(rmCube cube, rmVec3 p) { return rmCubeCollide(cube, (rmCube){p.x, p.y, p.z, 1, 1, 1}); }
+rmBool rmCubeCollide(rmCube r, rmCube r2) {
+     return (r.x + r.w >= r2.x && r.x <= r2.x + r2.w && r.y + r.h >= r2.y && r.y <= r2.y + r2.h && r.z + r.l >= r2.z && r.z <= r2.z + r2.l);
+}
 
 rmMat4 rmMat4Multiply(float left[16], float right[16]) {
     return (rmMat4) {
