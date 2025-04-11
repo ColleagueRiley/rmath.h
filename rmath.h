@@ -113,13 +113,13 @@ typedef struct rmVec2 { float x, y; } rmVec2;
 typedef struct rmVec3 { float x, y, z; } rmVec3;
 typedef struct rmVec4 { float x, y, z, w; } rmVec4;
 
-RMATHDEF rmVec2 rmVec2DAdd(rmVec2 v1, rmVec2 v2);
-RMATHDEF rmVec3 rmVec3DAdd(rmVec3 v1, rmVec3 v2);
-RMATHDEF rmVec4 rmVec4DAdd(rmVec4 v1, rmVec4 v2);
+RMATHDEF rmVec2 rmVec2Add(rmVec2 v1, rmVec2 v2);
+RMATHDEF rmVec3 rmVec3Add(rmVec3 v1, rmVec3 v2);
+RMATHDEF rmVec4 rmVec4Add(rmVec4 v1, rmVec4 v2);
 
-RMATHDEF rmVec2 rmVec2DSubrtact(rmVec2 v1, rmVec2 v2);
-RMATHDEF rmVec3 rmVec3DSubtract(rmVec3 v1, rmVec3 v2);
-RMATHDEF rmVec4 rmVec4DSubtract(rmVec4 v1, rmVec4 v2);
+RMATHDEF rmVec2 rmVec2Subrtact(rmVec2 v1, rmVec2 v2);
+RMATHDEF rmVec3 rmVec3Subtract(rmVec3 v1, rmVec3 v2);
+RMATHDEF rmVec4 rmVec4Subtract(rmVec4 v1, rmVec4 v2);
 
 RMATHDEF rmVec2 rmVec2Multiply(rmVec2 v1, rmVec2 v2);
 RMATHDEF rmVec3 rmVec3Multiply(rmVec3 v1, rmVec3 v2);
@@ -157,7 +157,7 @@ RMATHDEF rmBool rmCircleCollide(rmCircle cir1, rmCircle cir2);
 RMATHDEF rmBool rmRectCollideVec2(rmRect r, rmVec2 p);
 RMATHDEF rmBool rmRectCollide(rmRect r, rmRect r2);
 RMATHDEF rmBool rmVec2Collide(rmVec2 p, rmVec2 p2);
-RMATHDEF rmBool rmVec3DCollide(rmVec3 p, rmVec3 p2);
+RMATHDEF rmBool rmVec3Collide(rmVec3 p, rmVec3 p2);
 RMATHDEF rmBool rmCubeCollideVec3(rmCube p, rmVec3 p2);
 RMATHDEF rmBool rmCubeCollide(rmCube cube, rmCube cube2);
 
@@ -168,13 +168,13 @@ rmVec3 rmVec4ToVec3(rmVec4 v) {
                   v.z / v.w);
 }
 
-rmVec2 rmVec2DAdd(rmVec2 v1, rmVec2 v2) { return (rmVec2){ v1.x + v2.x, v1.y + v2.y }; }
-rmVec3 rmVec3DAdd(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x + v2.x, v1.y + v2.y, v1.z + v2.z }; }
-rmVec4 rmVec4DAdd(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w }; }
+rmVec2 rmVec2Add(rmVec2 v1, rmVec2 v2) { return (rmVec2){ v1.x + v2.x, v1.y + v2.y }; }
+rmVec3 rmVec3Add(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x + v2.x, v1.y + v2.y, v1.z + v2.z }; }
+rmVec4 rmVec4Add(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w }; }
 
-rmVec2 rmVec2DSubrtact(rmVec2 v1, rmVec2 v2) {  return (rmVec2){ v1.x - v2.x, v1.y - v2.y}; }
-rmVec3 rmVec3DSubtract(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x - v2.x, v1.y - v2.y, v1.z - v2.z }; }
-rmVec4 rmVec4DSubtract(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w }; }
+rmVec2 rmVec2Subrtact(rmVec2 v1, rmVec2 v2) {  return (rmVec2){ v1.x - v2.x, v1.y - v2.y}; }
+rmVec3 rmVec3Subtract(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x - v2.x, v1.y - v2.y, v1.z - v2.z }; }
+rmVec4 rmVec4Subtract(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w }; }
 
 rmVec2 rmVec2Multiply(rmVec2 v1, rmVec2 v2) { return (rmVec2){ v1.x * v2.x, v1.y * v2.y }; }
 rmVec3 rmVec3Multiply(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x * v2.x, v1.y * v2.y, v1.z * v2.z }; }
@@ -341,7 +341,7 @@ rmBool rmCircleCollide(rmCircle cir1, rmCircle cir2) {
 rmBool rmRectCollideVec2(rmRect r, rmVec2 p) { return (p.x >= r.x &&  p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h); }
 rmBool rmRectCollide(rmRect r, rmRect r2) { return (r.x + r.w >= r2.x && r.x <= r2.x + r2.w && r.y + r.h >= r2.y && r.y <= r2.y + r2.h); }
 rmBool rmVec2Collide(rmVec2 p, rmVec2 p2) { return (p.x == p2.x && p.y == p2.y); }
-rmBool rmVec3DCollide(rmVec3 p, rmVec3 p2) { return (p.x == p2.x && p.y == p2.y && p.z == p2.z); }
+rmBool rmVec3Collide(rmVec3 p, rmVec3 p2) { return (p.x == p2.x && p.y == p2.y && p.z == p2.z); }
 rmBool rmCubeCollideVec3(rmCube cube, rmVec3 p) { return rmCubeCollide(cube, (rmCube){p.x, p.y, p.z, 1, 1, 1}); }
 rmBool rmCubeCollide(rmCube r, rmCube r2) {
      return (r.x + r.w >= r2.x && r.x <= r2.x + r2.w && r.y + r.h >= r2.y && r.y <= r2.y + r2.h && r.z + r.l >= r2.z && r.z <= r2.z + r2.l);
