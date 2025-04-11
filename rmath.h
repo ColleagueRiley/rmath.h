@@ -97,7 +97,9 @@
 #define rmTan(theta) (rmCos(theta) / rmSin(theta))
 #define rmCot(theta) (rmSin(theta) / rmCos(theta))
 
+#ifndef rmMat4
 typedef struct rmMat4 { float m[16]; } rmMat4;
+#endif
 
 /* transformations */
 RMATHDEF rmMat4 rmLoadIdentity(void);
@@ -109,9 +111,11 @@ RMATHDEF rmMat4 rmScale(float matrix[16], float x, float y, float z);
 
 RMATHDEF rmMat4 rmMat4Multiply(float left[16], float right[16]);
 
+#ifndef RMATH_VECTORS_DEFINED
 typedef struct rmVec2 { float x, y; } rmVec2;
 typedef struct rmVec3 { float x, y, z; } rmVec3;
 typedef struct rmVec4 { float x, y, z, w; } rmVec4;
+#endif
 
 RMATHDEF rmVec2 rmVec2DAdd(rmVec2 v1, rmVec2 v2);
 RMATHDEF rmVec3 rmVec3DAdd(rmVec3 v1, rmVec3 v2);
