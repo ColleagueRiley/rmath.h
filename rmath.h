@@ -101,6 +101,12 @@
 typedef struct rmMat4 { float m[16]; } rmMat4;
 #endif
 
+RMATHDEF float rmClamp(float value, float min, float max);
+RMATHDEF float rmNormalize(float value, float start, float end);
+RMATHDEF float rmLerp(float start, float end, float amount);
+RMATHDEF float rmRemap(float value, float inputStart, float inputEnd, float outputStart, float outputEnd);
+RMATHDEF float rmWrap(float value, float min, float max);
+
 /* transformations */
 RMATHDEF rmMat4 rmLoadIdentity(void);
 RMATHDEF rmMat4 rmTranslate(float matrix[16], float x, float y, float z);
@@ -117,11 +123,15 @@ typedef struct rmVec3 { float x, y, z; } rmVec3;
 typedef struct rmVec4 { float x, y, z, w; } rmVec4;
 #endif
 
+#define RM_VEC2(x, y) (rmVec2){x, y}
+#define RM_VEC3(x, y, z) (rmVec3){x, y, z}
+#define RM_VEC4(x, y, z, w) (rmVec4){x, y, z, w}
+
 RMATHDEF rmVec2 rmVec2Add(rmVec2 v1, rmVec2 v2);
 RMATHDEF rmVec3 rmVec3Add(rmVec3 v1, rmVec3 v2);
 RMATHDEF rmVec4 rmVec4Add(rmVec4 v1, rmVec4 v2);
 
-RMATHDEF rmVec2 rmVec2Subrtact(rmVec2 v1, rmVec2 v2);
+RMATHDEF rmVec2 rmVec2Subtract(rmVec2 v1, rmVec2 v2);
 RMATHDEF rmVec3 rmVec3Subtract(rmVec3 v1, rmVec3 v2);
 RMATHDEF rmVec4 rmVec4Subtract(rmVec4 v1, rmVec4 v2);
 
@@ -133,9 +143,17 @@ RMATHDEF rmVec2 rmVec2Divide(rmVec2 v1, rmVec2 v2);
 RMATHDEF rmVec3 rmVec3Divide(rmVec3 v1, rmVec3 v2);
 RMATHDEF rmVec4 rmVec4Divide(rmVec4 v1, rmVec4 v2);
 
-#define RM_VEC2(x, y) (rmVec2){x, y}
-#define RM_VEC3(x, y, z) (rmVec3){x, y, z}
-#define RM_VEC4(x, y, z, w) (rmVec4){x, y, z, w}
+RMATHDEF float rmVec2Dist(rmVec2 v1, rmVec2 v2);
+RMATHDEF float rmVec3Dist(rmVec3 v1, rmVec3 v2);
+RMATHDEF float rmVec4Dist(rmVec4 v1, rmVec4 v2);
+
+RMATHDEF float rmVec2Dot(rmVec2 v, rmVec2 v1);
+RMATHDEF float rmVec3Dot(rmVec3 v, rmVec3 v1);
+RMATHDEF float rmVec4Dot(rmVec4 v, rmVec4 v1);
+
+RMATHDEF float rmVec2Cross(rmVec2 v, rmVec2 v1);
+RMATHDEF float rmVec3Cross(rmVec3 v, rmVec3 v1);
+RMATHDEF float rmVec4Cross(rmVec4 v, rmVec4 v1);
 
 RMATHDEF rmVec2 rmVec2MultiplyMat4(rmVec2 vec, rmMat4 matrix); 
 RMATHDEF rmVec3 rmVec3MultiplyMat4(rmVec3 vec, rmMat4 matrix); 
@@ -163,6 +181,10 @@ typedef u8 rmBool;
 #define RMATH_FALSE 0 
 #endif
 
+RMATHDEF rmBool rmVec2Cmp(rmVec2 v, rmVec2 v1);
+RMATHDEF rmBool rmVec3Cmp(rmVec3 v, rmVec3 v1);
+RMATHDEF rmBool rmVec4Cmp(rmVec4 v, rmVec4 v1);
+
 RMATHDEF rmBool rmCircleCollideVec2(rmCircle c, rmVec2 p);
 RMATHDEF rmBool rmCircleCollideRect(rmCircle c, rmRect r);
 RMATHDEF rmBool rmCircleCollide(rmCircle cir1, rmCircle cir2);
@@ -174,6 +196,25 @@ RMATHDEF rmBool rmCubeCollideVec3(rmCube p, rmVec3 p2);
 RMATHDEF rmBool rmCubeCollide(rmCube cube, rmCube cube2);
 
 #ifndef RMATH_IMPLEMENTATON
+float rmClamp(float value, float min, float max) { 
+    if (value < min) return min;
+    if (value > max) return max;
+
+    return value;
+}
+float rmNormalize(float value, float start, float end) { 
+   return (value - start)/(end - start);
+}
+float rmLerp(float start, float end, float amount) { 
+    return start + amount*(end - start);
+}
+float rmRemap(float value, float inputStart, float inputEnd, float outputStart, float outputEnd) { 
+    return (value - inputStart)/(inputEnd - inputStart)*(outputEnd - outputStart) + outputStart;
+}
+float rmWrap(float value, float min, float max) { 
+    return value - (max - min)*floorf((value - min)/(max - min));
+}
+
 rmVec3 rmVec4ToVec3(rmVec4 v) {
    return RM_VEC3(v.x / v.w,  
                   v.y / v.w, 
@@ -206,7 +247,7 @@ rmVec2 rmVec2Add(rmVec2 v1, rmVec2 v2) { return (rmVec2){ v1.x + v2.x, v1.y + v2
 rmVec3 rmVec3Add(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x + v2.x, v1.y + v2.y, v1.z + v2.z }; }
 rmVec4 rmVec4Add(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w }; }
 
-rmVec2 rmVec2Subrtact(rmVec2 v1, rmVec2 v2) {  return (rmVec2){ v1.x - v2.x, v1.y - v2.y}; }
+rmVec2 rmVec2Subtract(rmVec2 v1, rmVec2 v2) {  return (rmVec2){ v1.x - v2.x, v1.y - v2.y}; }
 rmVec3 rmVec3Subtract(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x - v2.x, v1.y - v2.y, v1.z - v2.z }; }
 rmVec4 rmVec4Subtract(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w }; }
 
@@ -217,6 +258,27 @@ rmVec4 rmVec4Multiply(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x * v2.x, v1.y
 rmVec2 rmVec2Divide(rmVec2 v1, rmVec2 v2) { return (rmVec2){ v1.x / v2.x, v1.y / v2.y }; }
 rmVec3 rmVec3Divide(rmVec3 v1, rmVec3 v2) { return (rmVec3){ v1.x / v2.x, v1.y / v2.y, v1.z / v2.z }; }
 rmVec4 rmVec4Divide(rmVec4 v1, rmVec4 v2) { return (rmVec4){ v1.x / v2.x, v1.y / v2.y, v1.z / v2.z, v1.w / v2.w }; }
+
+float rmVec2Dist(rmVec2 v1, rmVec2 v2) { 
+    rmVec2 res = rmVec2Subtract(v1, v2);
+    return sqrtf((res.x * res.x) + (res.y * res.y));
+}
+float rmVec3Dist(rmVec3 v1, rmVec3 v2) { 
+    rmVec3 res = rmVec3Subtract(v1, v2);
+    return sqrtf((res.x * res.x) + (res.y * res.y) + (res.z * res.z));
+}
+float rmVec4Dist(rmVec4 v1, rmVec4 v2) { 
+    rmVec4 res = rmVec4Subtract(v1, v2);
+    return sqrtf((res.x * res.x) + (res.y * res.y) + (res.z * res.z) + (res.w * res.w));
+}
+
+float rmVec2Dot(rmVec2 v, rmVec2 v1) { return (v.x * v1.x) + (v.y * v1.y); }
+float rmVec3Dot(rmVec3 v, rmVec3 v1) { return (v.x * v1.x) + (v.y * v1.y) + (v.z * v1.z); }
+float rmVec4Dot(rmVec4 v, rmVec4 v1) { return (v.x * v1.x) + (v.y * v1.y) + (v.z * v1.z) + (v.w * v1.w); }
+
+float rmVec2Cross(rmVec2 v, rmVec2 v1) { return (v.x * v1.x) - (v.y * v1.y); }
+float rmVec3Cross(rmVec3 v, rmVec3 v1) { return (v.x * v1.x) - (v.y * v1.y) - (v.z * v1.z); }
+float rmVec4Cross(rmVec4 v, rmVec4 v1) { return (v.x * v1.x) - (v.y * v1.y) - (v.z * v1.z) - (v.w * v1.w); }
 
 rmMat4 rmLoadIdentity(void) {
     rmMat4 matrix = (rmMat4) { 
@@ -342,6 +404,10 @@ rmVec4 rmVec4MultiplyMat4(rmVec4 vec, rmMat4 matrix) {
         (float)(matrix.m[3] * vec.x + matrix.m[7] * vec.y + matrix.m[11] * vec.z + matrix.m[15])
     };
 } 
+
+rmBool rmVec2Cmp(rmVec2 v, rmVec2 v1) { return (v.x == v1.x && v.y == v1.y); }
+rmBool rmVec3Cmp(rmVec3 v, rmVec3 v1) { return (v.x == v1.x && v.y == v1.y && v.z == v1.z); }
+rmBool rmVec4Cmp(rmVec4 v, rmVec4 v1) { return (v.x == v1.x && v.y == v1.y && v.z == v1.z && v.w == v1.w); }
 
 rmBool rmCircleCollideVec2(rmCircle c, rmVec2 p) { return rmCircleCollideRect(c, (rmRect){p.x, p.y, 1, 1}); }
 rmBool rmCircleCollideRect(rmCircle c, rmRect r) {

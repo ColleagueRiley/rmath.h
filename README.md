@@ -11,9 +11,5 @@ rmath.h is a stb-style math library and GLM alternative.
 - you can use your own custom data-types 
 
 # TODO 
-- dot product of a vector
-- distance between vectors
-- vector cmp
-- clamp, normalize, lerp, remap, wrap
 - SIMD
 
