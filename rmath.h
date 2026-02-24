@@ -195,7 +195,7 @@ RMATHDEF rmBool rmVec3Collide(rmVec3 p, rmVec3 p2);
 RMATHDEF rmBool rmCubeCollideVec3(rmCube p, rmVec3 p2);
 RMATHDEF rmBool rmCubeCollide(rmCube cube, rmCube cube2);
 
-#ifndef RMATH_IMPLEMENTATON
+#ifdef RMATH_IMPLEMENTATON
 float rmClamp(float value, float min, float max) { 
     if (value < min) return min;
     if (value > max) return max;
